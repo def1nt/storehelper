@@ -1,0 +1,12 @@
+\\srv-1\c$\Temp\
+0
+\\srv-2\backup\
+20
+# <- This symbol stops reading immediately
+# Sample configuration file
+# Current config format:
+# - path
+# - how many files to keep (ordered from new to old)
+# Directories are always ignored
+# Should be run by a user that has enough privileges
+# to write access target files
