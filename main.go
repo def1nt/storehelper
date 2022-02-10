@@ -15,10 +15,12 @@ var config []string
 func main() {
 
 	initialize()
-
+	if debug {
+		log.Println("Debug mode, no file operations will be performed!")
+	}
 	processdirs()
 
-	log.Println("Exiting normally") // debug
+	log.Println("Exiting normally.") // debug
 }
 
 func getfiles(workpath string) []fs.DirEntry {
@@ -67,9 +69,11 @@ func processfiles(path string, files []fs.DirEntry) { // Вызывается и
 	log.Println("Will be deleted:")
 	for _, file := range files {
 		log.Println(path + file.Name()) // Will stay anyway for logging purpose
-		err := os.Remove(path + file.Name())
-		if err != nil {
-			log.Println(err.Error())
+		if !debug {
+			err := os.Remove(path + file.Name())
+			if err != nil {
+				log.Println(err.Error())
+			}
 		}
 	}
 }

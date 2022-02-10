@@ -8,9 +8,20 @@ import (
 	"strings"
 )
 
+var debug bool = false // Отладочный режим, не выполнять операции, только выводит отчёт, ключ -t
+
 func initialize() error {
 	if len(os.Args) == 1 {
 		log.Fatal("No config file specified as a first argument")
+	}
+
+	if len(os.Args) > 2 {
+		for _, s := range os.Args {
+			switch s {
+			case "t", "-t":
+				debug = true
+			}
+		}
 	}
 
 	var conffile string = os.Args[1]
