@@ -61,18 +61,21 @@ func processdirs() { // На основании конфига запускае�
 		files := getfiles(path)
 		sortfiles(&files)
 		filestodelete := filterfiles(files, func() int { i, _ := strconv.Atoi(config[i*2+1]); return i }())
-		processfiles(path, filestodelete)
+		processfiles(path, filestodelete, "d")
 	}
 }
 
-func processfiles(path string, files []fs.DirEntry) { // Вызывается из processdirs для выполнения операций
-	log.Println("Will be deleted:")
-	for _, file := range files {
-		log.Println(path + file.Name()) // Will stay anyway for logging purpose
-		if !debug {
-			err := os.Remove(path + file.Name())
-			if err != nil {
-				log.Println(err.Error())
+func processfiles(path string, files []fs.DirEntry, operation string) { // Вызывается из processdirs для выполнения операций
+	switch operation {
+	case "d":
+		log.Println("Will be deleted:")
+		for _, file := range files {
+			log.Println(path + file.Name()) // Will stay anyway for logging purpose
+			if !debug {
+				err := os.Remove(path + file.Name())
+				if err != nil {
+					log.Println(err.Error())
+				}
 			}
 		}
 	}
