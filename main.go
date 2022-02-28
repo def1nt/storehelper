@@ -8,6 +8,7 @@ import (
 	"os"
 	"sort"
 	"strconv"
+	"strings"
 )
 
 var config []string
@@ -47,29 +48,80 @@ func sortfiles(files *[]fs.DirEntry) *[]fs.DirEntry { // Sorts original list in 
 	return files
 }
 
-func filterfiles(files []fs.DirEntry, n int) []fs.DirEntry { // returns cut slice of files
-	if n <= len(files)-1 {
-		return files[n:]
+func filterfiles(files []fs.DirEntry, ops string) []fs.DirEntry { // returns cut slice of files
+	var s strings.Builder
+	var t string
+	var n int
+	for _, r := range ops {
+		if r == ':' {
+			t = s.String()
+			s.Reset()
+			continue
+		}
+		s.WriteRune(r)
 	}
+	n, _ = strconv.Atoi(s.String())
+
+	switch t {
+	case "n":
+		if n < 1 {
+			break // and return empty
+		}
+		if n >= len(files) {
+			return files
+		}
+		if n < len(files) {
+			return files[:n]
+		}
+	case "o":
+		if n < 1 {
+			break
+		}
+		if n >= len(files) {
+			return files
+		}
+		if n < len(files) {
+			return files[len(files)-n:]
+		}
+	case "y":
+	case "e":
+	}
+
 	return *new([]fs.DirEntry)
 }
 
 func processdirs() { // На основании конфига запускает операции
-	var n int = len(config) / 2
-	for i := 0; i < n; i++ {
-		path := config[i*2]
+	for _, wi := range config1 {
+		path := wi.path
 		files := getfiles(path)
 		sortfiles(&files)
-		filestodelete := filterfiles(files, func() int { i, _ := strconv.Atoi(config[i*2+1]); return i }())
-		processfiles(path, filestodelete, "d")
+		filtered := filterfiles(files, wi.operations[0])
+		processfiles(path, files, filtered, wi.operations[1])
 	}
 }
 
-func processfiles(path string, files []fs.DirEntry, operation string) { // Вызывается из processdirs для выполнения операций
+func processfiles(path string, files []fs.DirEntry, filtered []fs.DirEntry, operation string) { // Вызывается для выполнения операций
 	switch operation {
 	case "d":
 		log.Println("Will be deleted:")
+		for _, file := range filtered {
+			log.Println(path + file.Name()) // Will stay anyway for logging purpose
+			if !debug {
+				err := os.Remove(path + file.Name())
+				if err != nil {
+					log.Println(err.Error())
+				}
+			}
+		}
+	case "k":
+		log.Println("Will be deleted:")
+	deleting:
 		for _, file := range files {
+			for _, keepfile := range filtered {
+				if keepfile.Name() == file.Name() {
+					continue deleting
+				}
+			}
 			log.Println(path + file.Name()) // Will stay anyway for logging purpose
 			if !debug {
 				err := os.Remove(path + file.Name())
