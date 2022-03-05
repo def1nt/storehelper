@@ -16,9 +16,9 @@ type workitem struct {
 	operations []string
 }
 
-var config1 []workitem
+var config []workitem
 
-func initialize() error {
+func initialize() {
 	if len(os.Args) == 1 {
 		log.Fatal("No config file specified as a first argument!")
 	}
@@ -33,8 +33,6 @@ func initialize() error {
 	}
 
 	readconfig()
-
-	return nil
 }
 
 func readconfig() {
@@ -48,6 +46,7 @@ func readconfig() {
 		log.Fatal("Cannot read config, error: ", err.Error())
 	}
 
+	var config_t []string
 	var param strings.Builder
 	for _, b := range bytes {
 		if b == 35 { // # — стоп символ, пока и так сойдёт
@@ -58,7 +57,7 @@ func readconfig() {
 		}
 		if b == 10 || b == 0 {
 			if param.Len() > 0 {
-				config = append(config, param.String())
+				config_t = append(config_t, param.String())
 				param.Reset()
 			}
 			continue
@@ -66,12 +65,12 @@ func readconfig() {
 		param.WriteByte(b)
 	}
 	if param.Len() > 0 {
-		config = append(config, param.String())
+		config_t = append(config_t, param.String())
 	}
 
-	readworkitems()
+	readworkitems(&config_t)
 	if debug { // Probably will go elswhere, we print this in debug mode
-		for _, w := range config1 {
+		for _, w := range config {
 			fmt.Println("path: ", w.path)
 			fmt.Println("operations: ", func() []string {
 				var res []string
@@ -84,19 +83,19 @@ func readconfig() {
 		}
 	}
 
-	for i := range config { // Every 2nd line is a path and needs to be cleaned
+	for i := range config_t { // Every 2nd line is a path and needs to be cleaned
 		if i%2 == 0 {
-			config[i] = path.Clean(config[i])
+			config_t[i] = path.Clean(config_t[i])
 		}
 	}
 }
 
-func readworkitems() {
-	for i := 0; i+1 < len(config); i += 2 {
+func readworkitems(config_t *[]string) { // Из текстового конфига в элементы
+	for i := 0; i+1 < len(*config_t); i += 2 {
 		var wi workitem
-		wi.path = path.Clean(config[i])
-		wi.operations = processoperations(config[i+1])
-		config1 = append(config1, wi)
+		wi.path = path.Clean((*config_t)[i])
+		wi.operations = processoperations((*config_t)[i+1])
+		config = append(config, wi)
 	}
 }
 

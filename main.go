@@ -1,5 +1,3 @@
-// It gets config file as the CL argument
-
 package main
 
 import (
@@ -11,9 +9,8 @@ import (
 	"strings"
 )
 
-var config []string
-
 func main() {
+	log.Println("Starting.")
 
 	initialize()
 	if debug {
@@ -27,7 +24,7 @@ func main() {
 func getfiles(workpath string) []fs.DirEntry {
 	files, err := os.ReadDir(workpath)
 	if err != nil {
-		log.Fatal("Cannot read target directory: ", workpath, "\n", err.Error())
+		log.Println("Cannot read target directory: ", workpath, "\n", err.Error()) // not fatal, just log and skip
 		return nil
 	}
 	for i := 0; i < len(files); i++ { // Safe for work
@@ -60,7 +57,10 @@ func filterfiles(files []fs.DirEntry, ops string) []fs.DirEntry { // returns cut
 		}
 		s.WriteRune(r)
 	}
-	n, _ = strconv.Atoi(s.String())
+	n, err := strconv.Atoi(s.String())
+	if err != nil {
+		log.Println(err.Error())
+	}
 
 	switch t {
 	case "n":
@@ -91,9 +91,12 @@ func filterfiles(files []fs.DirEntry, ops string) []fs.DirEntry { // returns cut
 }
 
 func processdirs() { // На основании конфига запускает операции
-	for _, wi := range config1 {
+	for _, wi := range config {
 		path := wi.path
 		files := getfiles(path)
+		if files == nil { // if cannot read directory, skip this one, error logged in getfiles()
+			continue
+		}
 		sortfiles(&files)
 		filtered := filterfiles(files, wi.operations[0])
 		processfiles(path, files, filtered, wi.operations[1])
@@ -101,6 +104,7 @@ func processdirs() { // На основании конфига запускае�
 }
 
 func processfiles(path string, files []fs.DirEntry, filtered []fs.DirEntry, operation string) { // Вызывается для выполнения операций
+	log.Println("Working in: " + path)
 	switch operation {
 	case "d":
 		log.Println("Will be deleted:")
@@ -133,7 +137,7 @@ func processfiles(path string, files []fs.DirEntry, filtered []fs.DirEntry, oper
 	}
 }
 
-func remove(s *[]fs.DirEntry, i int) {
+func remove(s *[]fs.DirEntry, i int) { // modify given slice by removing item
 	(*s)[i] = (*s)[len(*s)-1]
 	*s = (*s)[:len(*s)-1]
 }
