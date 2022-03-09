@@ -82,12 +82,6 @@ func readconfig() {
 			}())
 		}
 	}
-
-	for i := range config_t { // Every 2nd line is a path and needs to be cleaned
-		if i%2 == 0 {
-			config_t[i] = path.Clean(config_t[i])
-		}
-	}
 }
 
 func readworkitems(config_t *[]string) { // Из текстового конфига в элементы
