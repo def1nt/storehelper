@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -24,10 +23,16 @@ func initialize() {
 	}
 
 	if len(os.Args) > 2 {
-		for _, s := range os.Args {
+		for i, s := range os.Args {
 			switch s {
 			case "t", "-t":
 				debug = true
+			case "l", "-l":
+				file, err := os.OpenFile(os.Args[i+1], os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
+				if err != nil {
+					log.Fatal(err.Error())
+				}
+				log.SetOutput(file)
 			}
 		}
 	}
@@ -69,19 +74,6 @@ func readconfig() {
 	}
 
 	readworkitems(&config_t)
-	if debug { // Probably will go elswhere, we print this in debug mode
-		for _, w := range config {
-			fmt.Println("path: ", w.path)
-			fmt.Println("operations: ", func() []string {
-				var res []string
-				for _, o := range w.operations {
-					o = "\"" + o + "\""
-					res = append(res, o)
-				}
-				return res
-			}())
-		}
-	}
 }
 
 func readworkitems(config_t *[]string) { // Из текстового конфига в элементы
