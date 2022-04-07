@@ -1,4 +1,5 @@
 conf_vmz
+conf_test
 *.exe
 storehelper
 testlog
