@@ -1,7 +1,7 @@
 \\srv-1\c$\Temp\
-n:3 k
+f n:3 k
 \\srv-2\backup\
-o:5 d
+df o:5 d
 # <- This symbol stops reading immediately
 # Sample configuration file
 # Current config format:
