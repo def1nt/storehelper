@@ -189,6 +189,11 @@ func copy(source string, destination string, files []fs.DirEntry) {
 			log.Println(err.Error())
 			continue
 		}
+		sstat, _ := sfile.Stat()
+		err = os.Chtimes(destination+f.Name(), sstat.ModTime(), sstat.ModTime())
+		if err != nil {
+			log.Println(err.Error())
+		}
 		log.Println("Copied", n, "bytes from", source+sfile.Name(), "to", destination)
 		sfile.Close()
 		dfile.Close()
