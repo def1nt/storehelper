@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func processjobs() {
@@ -74,7 +75,25 @@ func filter(op string, param string, files []fs.DirEntry) []fs.DirEntry {
 			return files[len(files)-n:]
 		}
 	case "y":
+		var t = make([]fs.DirEntry, 0, len(files))
+		var age float64 = float64(n * 24)
+		for _, f := range files {
+			fi, _ := f.Info()
+			if time.Since(fi.ModTime()).Hours() <= age {
+				t = append(t, f)
+			}
+		}
+		return t
 	case "e":
+		var t = make([]fs.DirEntry, 0, len(files))
+		var age float64 = float64(n * 24)
+		for _, f := range files {
+			fi, _ := f.Info()
+			if time.Since(fi.ModTime()).Hours() > age {
+				t = append(t, f)
+			}
+		}
+		return t
 	case "w":
 		var t = make([]fs.DirEntry, 0, cap(files))
 		for _, f := range files {
@@ -116,7 +135,7 @@ func dooperations(wi workitem) { // We perform these with A SINGLE WORKITEM mult
 		case "d", "f", "df":
 			selectiontype = op
 			files = getfiles(path, op)
-		case "n", "o", "w":
+		case "n", "o", "y", "e", "w":
 			files = filter(op, param, files)
 		case "r":
 			remove(path, files)
