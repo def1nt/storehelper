@@ -20,10 +20,10 @@ func processjobs() {
 func getfiles(workpath string, ftype string) []fs.DirEntry {
 	files, err := os.ReadDir(workpath)
 	if err != nil {
-		log.Println("Cannot read target directory: ", workpath, "\n", err.Error()) // not fatal, just log and skip
+		log.Println("Cannot read target directory:", err.Error()) // not fatal, just log and skip
 		return nil
 	}
-	for i := 0; i < len(files); i++ { // Safe for work
+	for i := 0; i < len(files); i++ { // Safe for work: len evaluates every loop
 		if ftype == "f" && files[i].IsDir() {
 			removefromslice(&files, i)
 			i--
@@ -56,7 +56,7 @@ func filter(op string, param string, files []fs.DirEntry) []fs.DirEntry {
 	switch op {
 	case "n":
 		if n < 1 {
-			break // and return empty
+			break // and return empty implicitly
 		}
 		if n >= len(files) {
 			return files
@@ -135,6 +135,9 @@ func dooperations(wi workitem) { // We perform these with A SINGLE WORKITEM mult
 		case "d", "f", "df":
 			selectiontype = op
 			files = getfiles(path, op)
+			if files == nil {
+				return // if no files were read initially, no point to continue with this item
+			}
 		case "n", "o", "y", "e", "w":
 			files = filter(op, param, files)
 		case "r":
@@ -170,12 +173,7 @@ func remove(path string, files []fs.DirEntry) {
 	for _, file := range files {
 		log.Println(path + file.Name()) // Will stay anyway for logging purpose
 		if !debug {
-			var err error
-			if file.IsDir() {
-				err = os.RemoveAll(path + file.Name())
-			} else {
-				err = os.Remove(path + file.Name()) // Actually, we can use RemoveAll for everything
-			}
+			err := os.RemoveAll(path + file.Name())
 			if err != nil {
 				log.Println(err.Error())
 			}
