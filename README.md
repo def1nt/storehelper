@@ -11,9 +11,9 @@ f n:10 w:1 k
 which means to select in given path files created on mondays for last 10 days, keep them and delete the rest.
 Or
 ```
-f o:5 m:\\new-path\
+f e:10 m:\\new-path\
 ```
-which means to take five oldest files in given path and move them to their new destination.
+which means to take files older than 10 days in given path and move them to their new destination.
 
 Exact up to day manual is available in sample `conf` file.
 
@@ -23,16 +23,16 @@ I also wanted it to be cross-platform and easily portable, so no.
 
 ## Features
 ### Implemented:
-Filters: newest, oldest, day of week
+Filters: newest, oldest, day of week, age (days)
 
 Operations: remove, keep, copy
 
 ### In works:
-Filters: by age
+Filters: -
 
-Operations: move
+Operations: simple rename, email
 
 ### Some day:
 Filters: by complex date mask
 
-Operatins: rename by complex mask
+Operations: rename by complex mask, proper reports

@@ -3,10 +3,16 @@ f n:3 k
 \\srv-2\backup\
 df o:5 d
 # <- This symbol stops reading immediately
-# Sample configuration file
-# Current config format:
-# - path
-# - filter:count (single space) operation
-# Directories are always ignored
-# Should be run by a user that has enough privileges
-# to write access target files
+Sample configuration file
+Current config format:
+- path
+- operation
+Operations are three categories:
+Selectors:
+f (files only) d (directories only) df (everything)
+Filters:
+n:_ (newest _) o:_ (oldest _) y:_ (yonger than _ days) e:_ (older than _ days) w:_ (day of week _ from 1-7)
+Actions:
+r (remove selected) k (keep selected, remove the rest) c:Path (copy to Path)
+Should be run by a user that has enough privileges
+to write access target files
