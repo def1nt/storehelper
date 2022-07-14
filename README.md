@@ -23,7 +23,7 @@ I also wanted it to be cross-platform and easily portable, so no.
 
 ## Features
 ### Implemented:
-Filters: newest, oldest, day of week, age (days)
+Filters: newest, oldest, day of week, day of month, age (days)
 
 Operations: remove, keep, copy
 

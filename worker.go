@@ -103,7 +103,17 @@ func filter(op string, param string, files []fs.DirEntry) []fs.DirEntry {
 			}
 		}
 		return t
+	case "m":
+		var t = make([]fs.DirEntry, 0, cap(files))
+		for _, f := range files {
+			fi, _ := f.Info()
+			if fi.ModTime().Day() == n {
+				t = append(t, f)
+			}
+		}
+		return t
 	}
+
 	return make([]fs.DirEntry, 0)
 }
 
@@ -138,7 +148,7 @@ func dooperations(wi workitem) { // We perform these with A SINGLE WORKITEM mult
 			if files == nil {
 				return // if no files were read initially, no point to continue with this item
 			}
-		case "n", "o", "y", "e", "w":
+		case "n", "o", "y", "e", "w", "m":
 			files = filter(op, param, files)
 		case "r":
 			remove(path, files)
