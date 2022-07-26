@@ -156,6 +156,8 @@ func dooperations(wi workitem) { // We perform these with A SINGLE WORKITEM mult
 			remove(path, invert(path, selectiontype, files))
 		case "c":
 			copy(path, param, files)
+		case "v":
+			verify(files, param, path)
 		}
 	}
 }
