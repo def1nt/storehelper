@@ -24,11 +24,11 @@ func getfiles(workpath string, ftype string) []fs.DirEntry {
 		return nil
 	}
 	for i := 0; i < len(files); i++ { // Safe for work: len evaluates every loop
-		if ftype == "f" && files[i].IsDir() {
+		if (ftype == "f" || ftype == "files") && files[i].IsDir() {
 			removefromslice(&files, i)
 			i--
 		}
-		if ftype == "d" && !files[i].IsDir() {
+		if (ftype == "d" || ftype == "dirs") && !files[i].IsDir() {
 			removefromslice(&files, i)
 			i--
 		}
@@ -54,7 +54,7 @@ func filter(op string, param string, files []fs.DirEntry) []fs.DirEntry {
 	}
 
 	switch op {
-	case "n":
+	case "n", "newest":
 		if n < 1 {
 			break // and return empty implicitly
 		}
@@ -64,7 +64,7 @@ func filter(op string, param string, files []fs.DirEntry) []fs.DirEntry {
 		if n < len(files) {
 			return files[:n]
 		}
-	case "o":
+	case "o", "oldest":
 		if n < 1 {
 			break
 		}
@@ -74,7 +74,7 @@ func filter(op string, param string, files []fs.DirEntry) []fs.DirEntry {
 		if n < len(files) {
 			return files[len(files)-n:]
 		}
-	case "y":
+	case "y", "younger":
 		var t = make([]fs.DirEntry, 0, len(files))
 		var age float64 = float64(n * 24)
 		for _, f := range files {
@@ -84,7 +84,7 @@ func filter(op string, param string, files []fs.DirEntry) []fs.DirEntry {
 			}
 		}
 		return t
-	case "e":
+	case "e", "elder":
 		var t = make([]fs.DirEntry, 0, len(files))
 		var age float64 = float64(n * 24)
 		for _, f := range files {
@@ -94,7 +94,7 @@ func filter(op string, param string, files []fs.DirEntry) []fs.DirEntry {
 			}
 		}
 		return t
-	case "w":
+	case "w", "weekday":
 		var t = make([]fs.DirEntry, 0, cap(files))
 		for _, f := range files {
 			fi, _ := f.Info()
@@ -103,7 +103,7 @@ func filter(op string, param string, files []fs.DirEntry) []fs.DirEntry {
 			}
 		}
 		return t
-	case "m":
+	case "m", "monthday":
 		var t = make([]fs.DirEntry, 0, cap(files))
 		for _, f := range files {
 			fi, _ := f.Info()
@@ -142,21 +142,23 @@ func dooperations(wi workitem) { // We perform these with A SINGLE WORKITEM mult
 		op, param := parse(ops)
 		// log.Println("op:", op, "param:", param) // Can use for step-by-step debug
 		switch op {
-		case "d", "f", "df":
+		case "d", "f", "df",
+			"dirs", "files":
 			selectiontype = op
 			files = getfiles(path, op)
 			if files == nil {
-				return // if no files were read initially, no point to continue with this item
+				return // if nil then there was an error reading directory, skipping workitem
 			}
-		case "n", "o", "y", "e", "w", "m":
+		case "n", "o", "y", "e", "w", "m",
+			"newest", "oldest", "younger", "elder", "weekday", "monthday":
 			files = filter(op, param, files)
-		case "r":
+		case "r", "remove":
 			remove(path, files)
-		case "k":
+		case "k", "keep":
 			remove(path, invert(path, selectiontype, files))
-		case "c":
+		case "c", "copy":
 			copy(path, param, files)
-		case "v":
+		case "v", "verify":
 			verify(files, param, path)
 		}
 	}
