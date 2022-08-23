@@ -98,7 +98,11 @@ func filter(op string, param string, files []fs.DirEntry) []fs.DirEntry {
 		var t = make([]fs.DirEntry, 0, cap(files))
 		for _, f := range files {
 			fi, _ := f.Info()
-			if int(fi.ModTime().Weekday()) == n%7 {
+			wd := int(fi.ModTime().Weekday())
+			if wd == 0 {
+				wd = 7
+			}
+			if strings.ContainsAny(param, strconv.Itoa(wd)) {
 				t = append(t, f)
 			}
 		}
