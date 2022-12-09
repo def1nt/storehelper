@@ -234,8 +234,3 @@ func copy(source string, destination string, files []fs.DirEntry) {
 		log.Println("Copied", n, "bytes from", source+sfile.Name(), "to", destination)
 	}
 }
-
-func removefromslice(s *[]fs.DirEntry, i int) { // modify given slice by removing item
-	(*s)[i] = (*s)[len(*s)-1]
-	*s = (*s)[:len(*s)-1]
-}
