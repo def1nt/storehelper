@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io"
 	"log"
 	"os"
 	"path"
@@ -43,34 +42,17 @@ func initialize() {
 func readconfig() {
 	var conffile string = os.Args[1]
 	conffile = path.Clean(conffile)
-	var bytes []byte
-	var err error
-	bytes, err = os.ReadFile(conffile)
 
-	if err != nil && err != io.EOF {
+	temp, err := readfile(conffile)
+	if err != nil {
 		log.Fatal("Cannot read config, error: ", err.Error())
 	}
 
-	var config_t []string
-	var param strings.Builder
-	for _, b := range bytes {
-		if b == 35 { // # — стоп символ, пока и так сойдёт
-			break
+	var config_t []string = []string{}
+	for i := 0; i < len(temp); i++ {
+		if len(temp[i]) > 0 && temp[i][0] != '#' {
+			config_t = append(config_t, temp[i])
 		}
-		if b == 13 {
-			continue
-		}
-		if b == 10 || b == 0 {
-			if param.Len() > 0 {
-				config_t = append(config_t, param.String())
-				param.Reset()
-			}
-			continue
-		}
-		param.WriteByte(b)
-	}
-	if param.Len() > 0 {
-		config_t = append(config_t, param.String())
 	}
 
 	readworkitems(&config_t)
