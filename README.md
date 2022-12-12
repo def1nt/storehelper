@@ -25,12 +25,12 @@ I also wanted it to be cross-platform and easily portable, so no.
 ### Implemented:
 Filters: newest, oldest, day of week, day of month, age (days)
 
-Operations: remove, keep, copy
+Operations: remove, keep, copy, notify
 
 ### In works:
 Filters: -
 
-Operations: simple rename, email
+Operations: simple rename
 
 ### Some day:
 Filters: by complex date mask

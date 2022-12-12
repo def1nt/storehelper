@@ -2,17 +2,17 @@
 f n:3 k
 \\srv-2\backup\
 df o:5 d
-# <- This symbol stops reading immediately
-Sample configuration file
-Current config format:
-- path
-- operation
-Operations are three categories:
-Selectors:
-f (files only) d (directories only) df (everything)
-Filters:
-n:_ (newest _) o:_ (oldest _) y:_ (yonger than _ days) e:_ (older than _ days) w:_ (day of week _ from 1-7)
-Actions:
-r (remove selected) k (keep selected, remove the rest) c:Path (copy to Path)
-Should be run by a user that has enough privileges
-to write access target files
+# <- This symbol makes a comment
+# Sample configuration file
+# Current config format:
+# - path
+# - operation
+# Operations are three categories:
+# Selectors:
+# f[iles] (files only) d[irs] (directories only) df (everything, not "fd"!)
+# Filters:
+# n[ewest]:_ (newest _) o[ldest]:_ (oldest _) y[ounger]:_ (younger than _ days) e[lder]:_ (elder than _ days) w[eekday]:_ (day of week _ from 1-7, multiple without coma) m[onthday]:_ (day of month _ 1-31)
+# Actions:
+# r[emove] (remove selected) k[eep] (keep selected, remove the rest in current dir) c[opy]:Path (copy to Path)
+# Should be run by a user that has enough privileges
+# to write access target files
