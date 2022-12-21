@@ -15,6 +15,7 @@ type workitem struct {
 }
 
 var config []workitem
+var config2 map[string]string
 
 func initialize() {
 	if len(os.Args) == 1 {
@@ -36,6 +37,7 @@ func initialize() {
 		}
 	}
 
+	config2, _ = readconfigfull("main.conf")
 	readconfig()
 }
 
@@ -85,4 +87,20 @@ func processoperations(operations string) []string {
 	}
 
 	return ops
+}
+
+func readconfigfull(path string) (map[string]string, error) {
+	conf, err := readfile(path)
+	if err != nil {
+		return nil, err
+	}
+	var full_config = make(map[string]string)
+	for _, line := range conf {
+		par, val, found := strings.Cut(line, "=")
+		if !found {
+			continue
+		}
+		full_config[par] = val
+	}
+	return full_config, nil
 }
