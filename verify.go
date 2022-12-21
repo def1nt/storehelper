@@ -12,7 +12,7 @@ import (
 func verify(files []fs.DirEntry, rule string, path string) bool {
 	var verified bool = false
 	if len(rule) == 0 {
-		rule = "default"
+		rule = "default:exists"
 	}
 
 	verified = checkrules(rule, files, path)
