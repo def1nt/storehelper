@@ -11,24 +11,13 @@ func readfile(path string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	var file_t []string
-	var param strings.Builder
 
-	for _, b := range raw {
-		if b == 13 {
-			continue
+	file_t := strings.Split(string(raw), "\n")
+	for i := 0; i < len(file_t); i++ {
+		file_t[i] = strings.TrimSpace(file_t[i])
+		if len(file_t[i]) == 0 {
+			removefromslice(&file_t, i)
 		}
-		if b == 10 || b == 0 {
-			if param.Len() > 0 {
-				file_t = append(file_t, param.String())
-				param.Reset()
-			}
-			continue
-		}
-		param.WriteByte(b)
-	}
-	if param.Len() > 0 {
-		file_t = append(file_t, param.String())
 	}
 	return file_t, nil
 }
