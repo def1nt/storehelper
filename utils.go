@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io/fs"
 	"os"
 	"strings"
 )
@@ -34,7 +33,7 @@ func readfile(path string) ([]string, error) {
 	return file_t, nil
 }
 
-func removefromslice(s *[]fs.DirEntry, i int) { // modify given slice by removing item
+func removefromslice[T any](s *[]T, i int) { // modify given slice by removing item
 	(*s)[i] = (*s)[len(*s)-1]
 	*s = (*s)[:len(*s)-1]
 }
