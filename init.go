@@ -50,14 +50,14 @@ func readconfig() {
 		log.Fatal("Cannot read config, error: ", err.Error())
 	}
 
-	var config_t []string = []string{}
 	for i := 0; i < len(temp); i++ {
-		if len(temp[i]) > 0 && temp[i][0] != '#' {
-			config_t = append(config_t, temp[i])
+		if len(temp[i]) > 0 && temp[i][0] == '#' {
+			removefromslice(&temp, i)
+			i--
 		}
 	}
 
-	readworkitems(&config_t)
+	readworkitems(&temp)
 }
 
 func readworkitems(config_t *[]string) { // Из текстового конфига в элементы
