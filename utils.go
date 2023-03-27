@@ -12,7 +12,7 @@ func readfile(path string) ([]string, error) {
 		return nil, err
 	}
 
-	file_t := strings.Split(string(raw), "\n")
+	file_t := strings.Split(strings.ReplaceAll(string(raw), "\r", ""), "\n")
 	for i := 0; i < len(file_t); i++ {
 		file_t[i] = strings.TrimSpace(file_t[i])
 		if len(file_t[i]) == 0 {
@@ -23,6 +23,5 @@ func readfile(path string) ([]string, error) {
 }
 
 func removefromslice[T any](s *[]T, i int) { // modify given slice by removing item
-	(*s)[i] = (*s)[len(*s)-1]
-	*s = (*s)[:len(*s)-1]
+	*s = append((*s)[:i], (*s)[i+1:]...)
 }
