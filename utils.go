@@ -12,11 +12,12 @@ func readfile(path string) ([]string, error) {
 		return nil, err
 	}
 
-	file_t := strings.Split(strings.ReplaceAll(string(raw), "\r", ""), "\n")
+	file_t := strings.Split(string(raw), "\n")
 	for i := 0; i < len(file_t); i++ {
 		file_t[i] = strings.TrimSpace(file_t[i])
 		if len(file_t[i]) == 0 {
 			removefromslice(&file_t, i)
+			i--
 		}
 	}
 	return file_t, nil
