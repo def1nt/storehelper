@@ -231,6 +231,6 @@ func copy(source string, destination string, files []fs.DirEntry) {
 		if err != nil {
 			log.Println(err.Error())
 		}
-		log.Println("Copied", n, "bytes from", source+sfile.Name(), "to", destination)
+		log.Println("Copied", n, "bytes from", sfile.Name(), "to", destination)
 	}
 }
